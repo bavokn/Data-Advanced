@@ -1,5 +1,10 @@
 from openpyxl import load_workbook
 from openpyxl.chart.series import Series
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from Voetbal.Spelertjes import Spelertjes
+import operator
 from openpyxl.chart.label import DataLabelList
 from openpyxl.chart import (
     ScatterChart,
@@ -29,11 +34,18 @@ class visual:
         chart.x_axis.title = 'gewicht'
         chart.y_axis.title = 'lengte'
 
-
         chart.legend = None
 
         xvalues = Reference(ws, min_col=6, min_row=2, max_row=101)
         values = Reference(ws, min_col=7, min_row=2, max_row=101)
+        #fill x and y, skip first
+        x=[]
+        y=[]
+        iterrows = iter(ws.rows)
+        next(iterrows)
+        for row in iterrows:
+            x.append(row[5].value)
+            y.append(row[6].value)
 
         series = Series(values, xvalues)
         series.graphicalProperties.line.noFill = True
@@ -56,7 +68,17 @@ class visual:
 
         wb.save(saveFileName)
 
+        area = np.pi * 20
+        plt.scatter(x, y, s=area, alpha=1)
+        plt.xlabel("gewicht")
+        plt.ylabel("lengte")
+        plt.grid(True,alpha=0.5)
+        plt.axis([19,31,110,140])
+        plt.show()
+
+
     def drawBarChart(self, fileName, sheetName, saveFileName = None):
+        spelertjes = Spelertjes()
         if saveFileName is None:
             saveFileName = fileName
         #read all the data using openpyxl and write data to grafiek tab
@@ -110,10 +132,16 @@ class visual:
         ws.add_chart(chart1, "C24")
         wb.save(saveFileName)
 
-    def averageAndModus(self, fileName, sheetName, saveFileName = None):
-        if saveFileName is None:
-            saveFileName = fileName
-            # read all the data using openpyxl and write data to grafiek tab
+        pd.DataFrame(goals).plot(kind='bar')
+        plt.xlabel("geboortecategorie")
+        plt.ylabel("aantal gemaakte goals")
+        plt.grid(True, alpha=0.5)
+        plt.show()
+
+
+
+    def averageAndModus(self, fileName,):
+        # read all the data using openpyxl and write data to grafiek tab
         wb = load_workbook(fileName)
         ws = wb['gegevens']
 
@@ -130,22 +158,62 @@ class visual:
                  "rechtervleugel": 0,
                  "piloot": 0, "keeper": 0}
 
-        modus = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}
+        modus = {"staart":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}, "linkervleugel":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},"rechtervleugel":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+                 "piloot":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},"keeper":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}}
 
         iterrows = iter(ws.rows)
         next(iterrows)
         for row in iterrows:
-            goals[row[1].value] += row[2].value
+            temp = modus[row[1].value]
+            temp[row[2].value] += 1
+            modus[row[1].value] = temp
             goalsCounter[row[1].value] += 1
-            modus[row[2].value] += 1
+            goals[row[1].value] += row[2].value
 
 
         for i in goals:
             averageGoals[i] = goals[i]/goalsCounter[i]
         #still need to write this to excel file
-        print("modus : " + str(max(modus,key=modus.get)))
+        print("modus : ")
+        for pos in modus:
+            print(str(pos)+ " :"+ str(max(modus[pos], key=modus[pos].get)))
+        print()
         print("Average Goals : ")
-        print(averageGoals)
+        for goal in averageGoals:
+            print(str(goal) + " : " + str(averageGoals[goal]))
+
+    def calculateQuartileAndStd(self,fileName):
+            # read all the data using openpyxl and write data to grafiek tab
+        wb = load_workbook(fileName)
+        ws = wb['gegevens']
+
+        data = []
+        #skip first row
+        iterrows = iter(ws.rows)
+        next(iterrows)
+        for row in iterrows:
+            data.append(row[5].value)
+        #calculate std and quartile 1
+        print("Kwartiel 1 : " + str(np.percentile(data,25)))
+        print("standaard afwijking : " + str(np.std(data)))
+
+    def drawBoxPlot(self,fileName):
+        wb = load_workbook(fileName)
+        ws = wb['gegevens']
+
+        data = {"linkervleugel":0,"rechtervleugel":0,"piloot":0}
+        iterrows = iter(ws.rows)
+        next(iterrows)
+        for row in iterrows:
+            pos = row[1].value
+            if pos == "piloot" or pos == "linkervleugel" or pos == "rechtervleugel":
+                data[row[1].value] += row[2].value
+
+        plt.boxplot(data.values(), 0, 'rs', 0)
+        plt.title("Boxplot")
+        plt.xlabel("aantal gemaakte goals")
+        plt.show()
+
 
 
 

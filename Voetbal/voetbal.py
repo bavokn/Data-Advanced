@@ -1,7 +1,5 @@
-
-from openpyxl import load_workbook
-from Graphs import visual as visual
-from Spelertjes import Spelertjes
+from Voetbal.Graphs import visual as visual
+from Voetbal.Spelertjes import Spelertjes
 
 
 def main():
@@ -10,7 +8,9 @@ def main():
     sheetName = "grafiek"
     graphs.drawScatterChart(fileName, sheetName, fileName)
     graphs.drawBarChart(fileName,sheetName,fileName)
-    graphs.averageAndModus(fileName,sheetName,fileName)
+    graphs.averageAndModus(fileName)
+    graphs.calculateQuartileAndStd(fileName)
+    graphs.drawBoxPlot(fileName)
 
 
 def fixAndFillFile():
