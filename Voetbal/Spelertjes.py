@@ -25,7 +25,7 @@ class Spelertje:
 class Spelertjes:
     def __init__(self):
         self.spelertjes = []
-        self.effort = {1:"zeer goed", 2 : "goed", 3:"goed",4:"matig"}
+        self.effort = {1: "zeer goed", 2: "goed", 3: "goed", 4: "matig"}
         self.spelertjesValues = []
 
     def addSpeler(self, spelertje):
