@@ -6,10 +6,10 @@ def main():
     fixAndFillFile()
     fileName = "correct.xlsx"
     sheetName = "grafiek"
-    graphs.drawScatterChart(fileName, sheetName, fileName)
-    graphs.drawBarChart(fileName,sheetName,fileName)
-    graphs.averageAndModus(fileName)
-    graphs.calculateQuartileAndStd(fileName)
+    # graphs.drawScatterChart(fileName, sheetName, fileName)
+    # graphs.drawBarChart(fileName,sheetName,fileName)
+    # graphs.averageAndModus(fileName)
+    # graphs.calculateQuartileAndStd(fileName)
     graphs.drawBoxPlot(fileName)
 
 

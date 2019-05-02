@@ -227,13 +227,14 @@ class visual:
         wb = load_workbook(fileName)
         ws = wb['gegevens']
 
-        data = {"linkervleugel":0,"rechtervleugel":0,"piloot":0}
+        data = {"linkervleugel":[],"rechtervleugel":[],
+                "piloot":[]}
         iterrows = iter(ws.rows)
         next(iterrows)
         for row in iterrows:
             pos = row[1].value
             if pos == "piloot" or pos == "linkervleugel" or pos == "rechtervleugel":
-                data[row[1].value] += row[2].value
+                data[row[1].value].append(row[2].value)
 
         plt.boxplot(data.values(), 0, 'rs', 0)
         plt.title("Boxplot")
