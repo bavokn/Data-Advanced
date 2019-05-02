@@ -138,7 +138,33 @@ class visual:
         plt.grid(True, alpha=0.5)
         plt.show()
 
+    def drawPieChart(self, fileName):
+        wb = load_workbook(fileName)
+        ws = wb['gegevens']
 
+        data = {"matig": 0, "goed": 0, "zeer goed": 0}
+        iterrows = iter(ws.rows)
+        next(iterrows)
+
+        total = 0
+
+        for row in iterrows:
+            inzet = row[4].value
+
+            # Check for possible incorrect values
+            if inzet == "matig" \
+                    or inzet == "goed" \
+                    or inzet == "zeer goed":
+                data[inzet] += 1
+                total += 1
+
+        fig, ax1 = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+
+        ax1.pie(data.values(), explode=(0, 0, 0), labels=data.keys(), autopct='%1.1f%%',
+                shadow=True, startangle=90)
+        ax1.axis('equal')
+
+        plt.show()
 
     def averageAndModus(self, fileName,):
         # read all the data using openpyxl and write data to grafiek tab
@@ -174,11 +200,11 @@ class visual:
         for i in goals:
             averageGoals[i] = goals[i]/goalsCounter[i]
         #still need to write this to excel file
-        print("modus : ")
+        print("Modus: \n---------------\n")
         for pos in modus:
             print(str(pos)+ " :"+ str(max(modus[pos], key=modus[pos].get)))
         print()
-        print("Average Goals : ")
+        print("Average Goals: \n---------------\n")
         for goal in averageGoals:
             print(str(goal) + " : " + str(averageGoals[goal]))
 
