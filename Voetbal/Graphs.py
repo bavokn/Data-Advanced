@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from Voetbal.Spelertjes import Spelertjes
-import operator
-from openpyxl.chart.label import DataLabelList
 from openpyxl.chart import (
     ScatterChart,
     Reference,
@@ -158,8 +156,10 @@ class visual:
                  "rechtervleugel": 0,
                  "piloot": 0, "keeper": 0}
 
-        modus = {"staart":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}, "linkervleugel":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},"rechtervleugel":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
-                 "piloot":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},"keeper":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}}
+        modus = {"staart":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}, "linkervleugel":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+                 "rechtervleugel":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},
+                 "piloot":{0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0},"keeper":
+                     {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0}}
 
         iterrows = iter(ws.rows)
         next(iterrows)
@@ -213,6 +213,35 @@ class visual:
         plt.title("Boxplot")
         plt.xlabel("aantal gemaakte goals")
         plt.show()
+
+    def drawPieChart(self, fileName):
+        wb = load_workbook(fileName)
+        ws = wb['gegevens']
+
+        data = {"matig": 0, "goed": 0, "zeer goed": 0}
+        iterrows = iter(ws.rows)
+        next(iterrows)
+
+        total = 0
+
+        for row in iterrows:
+            inzet = row[4].value
+
+            # Check for possible incorrect values
+            if inzet == "matig" \
+                    or inzet == "goed" \
+                    or inzet == "zeer goed":
+                data[inzet] += 1
+                total += 1
+
+        fig, ax1 = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+
+        ax1.pie(data.values(), explode=(0, 0, 0), labels=data.keys(), autopct='%1.1f%%',
+                shadow=True, startangle=90)
+        ax1.axis('equal')
+
+        plt.show()
+
 
 
 
