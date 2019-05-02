@@ -220,8 +220,8 @@ class visual:
         for row in iterrows:
             data.append(row[5].value)
         #calculate std and quartile 1
-        print("Kwartiel 1 : " + str(np.percentile(data,25)))
-        print("standaard afwijking : " + str(np.std(data)))
+        print("Kwartiel 1: " + str(np.percentile(data,25)))
+        print("Standaard afwijking: " + str(np.std(data)))
 
     def drawBoxPlot(self,fileName):
         wb = load_workbook(fileName)
